@@ -251,7 +251,10 @@
 
   async function exportMarkdown(options) {
     const context = getPageContext();
-    const articleRoot = document.querySelector('[data-testid="twitterArticleReadView"]');
+    let articleRoot = document.querySelector('[data-testid="twitterArticleReadView"]');
+    if (!articleRoot && context.isArticle) {
+      articleRoot = await waitForSelector('[data-testid="twitterArticleReadView"]', 2000);
+    }
 
     if (!context.isStatus && !context.isArticle && !articleRoot) {
       return {
@@ -298,6 +301,30 @@
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function waitForSelector(selector, timeoutMs) {
+    return new Promise((resolve) => {
+      const found = document.querySelector(selector);
+      if (found) return resolve(found);
+      let done = false;
+      const observer = new MutationObserver(() => {
+        if (done) return;
+        const el = document.querySelector(selector);
+        if (el) {
+          done = true;
+          observer.disconnect();
+          resolve(el);
+        }
+      });
+      observer.observe(document, { childList: true, subtree: true });
+      setTimeout(() => {
+        if (done) return;
+        done = true;
+        observer.disconnect();
+        resolve(null);
+      }, timeoutMs);
+    });
   }
 
   function expandTruncatedText(container) {
