@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "X to Markdown",
+  "version": "0.1.0",
+  "description": "Export X (Twitter) posts, threads, and articles to Markdown.",
+  "action": {
+    "default_title": "Export X to Markdown"
+  },
+  "host_permissions": ["https://x.com/*", "https://twitter.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*", "https://twitter.com/*"],
+      "js": ["content-script.js"],
+      "css": ["content-style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "x-to-markdown@local",
+      "strict_min_version": "109.0"
+    }
+  }
+}
