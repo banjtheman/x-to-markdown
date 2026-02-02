@@ -357,17 +357,25 @@
 
   function getPageContext() {
     const statusMatch = window.location.pathname.match(/^\/([^/]+)\/status\/(\d+)/);
+    const threadMatch = window.location.pathname.match(/^\/([^/]+)\/thread\/(\d+)/);
     const articleMatch = window.location.pathname.match(/^\/([^/]+)\/article\/(\d+)/);
-    const handle = statusMatch ? statusMatch[1] : articleMatch ? articleMatch[1] : "";
+    const handle = statusMatch
+      ? statusMatch[1]
+      : threadMatch
+        ? threadMatch[1]
+        : articleMatch
+          ? articleMatch[1]
+          : "";
     const authorFromUrl = handle ? `@${handle}` : "";
-    const statusId = statusMatch ? statusMatch[2] : "";
+    const statusId = statusMatch ? statusMatch[2] : threadMatch ? threadMatch[2] : "";
     const articleId = articleMatch ? articleMatch[2] : "";
     return {
       authorFromUrl,
       statusId,
       articleId,
-      isStatus: Boolean(statusMatch),
+      isStatus: Boolean(statusMatch || threadMatch),
       isArticle: Boolean(articleMatch),
+      isThread: Boolean(threadMatch),
       url: window.location.href
     };
   }
